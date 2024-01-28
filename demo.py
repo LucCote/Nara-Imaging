@@ -1,11 +1,13 @@
 import rasterio
 import numpy as np
-from metrics import get_metrics
-from segment import segment_contours
+from metrics import get_metrics, segment_contours
+# from segment import segment_contours
 # from contour import segment_contours
 from analyze import classify_segment
 import cv2
 import matplotlib.pyplot as plt
+
+FILENAME = "AOI2.TIF"
 
 def display_image(src, contours, labels, display_channels=[5,4,2]):
    # Read and normalize display bands
@@ -18,7 +20,7 @@ def display_image(src, contours, labels, display_channels=[5,4,2]):
     contour_canvas = np.zeros_like(display_image_8bit)
 
     # Draw contours
-    colors = {True: (0,255,0), False: (255,0,0)}  # Define colors for each class
+    colors = {0: (0,255,0), 1: (255,0,0), 2:(255,0,255), 3:(0,0,255)}  # Define colors for each class
     for i in range(len(contours)):
         cv2.drawContours(display_image_8bit, [contours[i]], -1, colors[labels[i]], 2)
 
@@ -50,6 +52,7 @@ print(labels)
 # # Display the result using matplotlib
 # plt.imshow(display_image)
 # plt.show()
-display_image(src,contours,labels)
 
-print(get_metrics(src,contours,labels,"test_sheet.csv"))
+true_pos, false_pos, true_neg, false_neg, metric_labels = get_metrics(src,contours,labels,"test_sheet.csv")
+display_image(src,contours,metric_labels)
+print(true_pos, false_pos, true_neg, false_neg)
