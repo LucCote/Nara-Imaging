@@ -72,6 +72,5 @@ def segment_contours(image_path, contour_channels = [7,8, 5], display_channels =
         plt.title("Result with Contours")
         plt.axis('off')
         plt.show()
-
-# Call the function with contour channels and display channels
-segment_contours('19OCT11091449-M2AS_R1C1-012529890010_01_P002.TIF', [7,8, 5], [5, 4, 2])
+        
+        return contours

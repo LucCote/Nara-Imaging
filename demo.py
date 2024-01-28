@@ -1,12 +1,13 @@
 import rasterio
 import numpy as np
-from metrics import get_metrics, segment_contours
+from metrics import get_metrics
+from segment import segment_contours
 # from contour import segment_contours
 from analyze import classify_segment
 
 
-src = rasterio.open('test_download.TIF')
-contours = segment_contours('test_download.TIF', 4)
+src = rasterio.open('./test.TIF')
+contours = segment_contours('./test.TIF')
 print(contours)
 labels = np.zeros(len(contours))
 for i in range(len(contours)):
