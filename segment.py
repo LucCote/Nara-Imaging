@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 
-def segment_contours(image_path, contour_channels, display_channels, min_contour_area=1, max_contour_area=5000):
+def segment_contours(image_path, contour_channels = [7,8, 5], display_channels = [5,4, 2], min_contour_area=1, max_contour_area=5000):
     with rasterio.open(image_path) as src:
         # Read the selected channels for contour segmentation
         contour_bands = src.read(contour_channels)
@@ -37,14 +37,14 @@ def segment_contours(image_path, contour_channels, display_channels, min_contour
         # Filter contours by area
         contours = [contour for contour in contours if min_contour_area < cv2.contourArea(contour) < max_contour_area]
 
-        # Print number of contours
-        print(f"Number of contours found: {len(contours)}")
+        # # Print number of contours
+        # print(f"Number of contours found: {len(contours)}")
 
-        # Display binary image
-        plt.imshow(binary_image, cmap='gray')
-        plt.title("Binary Image")
-        plt.axis('off')
-        plt.show()
+        # # Display binary image
+        # plt.imshow(binary_image, cmap='gray')
+        # plt.title("Binary Image")
+        # plt.axis('off')
+        # plt.show()
 
         # Read and normalize display bands
         display_bands = src.read(display_channels)
@@ -58,11 +58,11 @@ def segment_contours(image_path, contour_channels, display_channels, min_contour
         # Draw contours
         cv2.drawContours(contour_canvas, contours, -1, (255, 0, 0), 1)
 
-        # Display image with contours
-        plt.imshow(contour_canvas)
-        plt.title("Contours")
-        plt.axis('off')
-        plt.show()
+        # # Display image with contours
+        # plt.imshow(contour_canvas)
+        # plt.title("Contours")
+        # plt.axis('off')
+        # plt.show()
 
         # Overlay contours on display image
         result_image = cv2.addWeighted(display_image_8bit, 1, contour_canvas, 0.5, 0)
@@ -72,6 +72,5 @@ def segment_contours(image_path, contour_channels, display_channels, min_contour
         plt.title("Result with Contours")
         plt.axis('off')
         plt.show()
-
-# Call the function with contour channels and display channels
-segment_contours('19OCT11091449-M2AS_R1C1-012529890010_01_P002.TIF', [7,8, 5], [5, 4, 2])
+        
+        return contours

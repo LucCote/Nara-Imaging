@@ -1,6 +1,7 @@
 import rasterio
 import numpy as np
-from metrics import get_metrics, segment_contours
+from metrics import get_metrics
+from segment import segment_contours
 # from contour import segment_contours
 from analyze import classify_segment
 import cv2
@@ -30,9 +31,9 @@ def display_image(src, contours, labels, display_channels=[5,4,2]):
     plt.axis('off')
     plt.show()
 
-
 src = rasterio.open('AOI2.TIF')
 contours = segment_contours('AOI2.TIF', 4)
+
 print(contours)
 labels = np.zeros(len(contours))
 for i in range(len(contours)):
