@@ -13,7 +13,7 @@ def load_coords(src):
   cols, rows = np.meshgrid(np.arange(width), np.arange(height))
   xs, ys = rasterio.transform.xy(src.transform, rows, cols)
   transformer = Transformer.from_crs("epsg:32733","epsg:4326")
-  print("TRANSFORM:",transformer.transform(7419231, 478181))
+  # print("TRANSFORM:",transformer.transform(7419231, 478181))
   for i in range(len(xs)):
     for j in range(len(xs[i])):
       newp = transformer.transform(xs[i][j], ys[i][j])
@@ -35,8 +35,8 @@ def load_points(file):
 def transform_shape(shape, lats, longs):
   new_shape = np.copy(shape).astype('float64')
   for i in range(len(shape)):
-    new_shape[i][0] = lats[shape[i][0]][shape[i][1]]
-    new_shape[i][1] = longs[shape[i][0]][shape[i][1]]
+    new_shape[i][0] = lats[shape[i][1]][shape[i][0]]
+    new_shape[i][1] = longs[shape[i][1]][shape[i][0]]
   return new_shape
 
 def point_in_shape(shape, point):
@@ -93,12 +93,12 @@ def segment_contours(image_path, contour_channel, min_contour_area=60, max_conto
         contours = [contour for contour in contours if min_contour_area < cv2.contourArea(contour) < max_contour_area]
 
         return contours
-
-src = rasterio.open('test_download.TIF')
-contours = segment_contours('test_download.TIF', 4)
-print("found", len(contours))
-tags = [False for ele in contours]
-print(get_metrics(src, contours, tags, 'test_sheet.csv'))
+if __name__ == "__main__":
+  src = rasterio.open('test_download.TIF')
+  contours = segment_contours('test_download.TIF', 4)
+  print("found", len(contours))
+  tags = [False for ele in contours]
+  print(get_metrics(src, contours, tags, 'test_sheet.csv'))
 
 
   

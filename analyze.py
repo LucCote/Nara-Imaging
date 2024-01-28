@@ -104,8 +104,34 @@ def segment_and_classify(image_path, chunk_size=256, overlap=32, manual_threshol
         plt.imshow(display_image)
         plt.show()
 
-start_time = time.time()
-# Call the function with the specified parameters
-segment_and_classify('test.tif', chunk_size=256, overlap=32, manual_threshold=70)
-end_time = time.time()
-print(f"The process took {end_time - start_time} seconds.")
+if __name__ == "__main__":
+    start_time = time.time()
+    # Call the function with the specified parameters
+    segment_and_classify('test.tif', chunk_size=256, overlap=32, manual_threshold=70)
+    end_time = time.time()
+    print(f"The process took {end_time - start_time} seconds.")
+
+
+def classify_segment(contour, src):
+    image_data=src.read()
+    image = src.read(1)
+    mask = np.zeros(image.shape, dtype=np.uint8)
+    cv2.drawContours(mask, [contour], -1, color=255, thickness=-1)
+
+    # Extract band data for the current segment
+    segment_band_values = [band[mask == 255] for band in image_data]
+    # Define your classification logic here
+    # For example, based on mean value of the band data:
+    b1 = np.mean(segment_band_values[0])
+    b4 = np.mean(segment_band_values[3])
+    b7 = np.mean(segment_band_values[6])
+
+    #one band 
+    normalized_diff = (b4-b7)/(b4+b7)
+    nara_threshold = .075672
+    threshold_std = 3*.007612
+
+    if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
+        return True
+    else:
+        return False

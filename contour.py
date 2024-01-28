@@ -49,6 +49,7 @@ def segment_contours(image_path, chunk_size=256, overlap=32, manual_threshold=50
                     contour[:, :, 1] += y1
                     all_contours.append(contour)
 
+        return contour
         # Create an output image to draw the contours on
         # Convert the original image to a 3-channel BGR image
         display_image = cv2.cvtColor(image, cv2.COLOR_BAYER_BG2BGR_EA)
@@ -65,6 +66,7 @@ def segment_contours(image_path, chunk_size=256, overlap=32, manual_threshold=50
         plt.imshow(display_image)
         plt.show()
 
-# Call the function with the specified parameters
-segment_contours('test.tif', chunk_size=256, overlap=32, manual_threshold=70)
+if __name__ == "__main__":
+    # Call the function with the specified parameters
+    segment_contours('test.tif', chunk_size=256, overlap=32, manual_threshold=70)
 
