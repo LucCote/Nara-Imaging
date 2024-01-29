@@ -4,6 +4,8 @@ from metrics import get_metrics
 from segment import segment_contours
 # from contour import segment_contours
 from analyze import classify_segment
+import matplotlib.pyplot as plt
+import cv2
 
 
 FILENAME = "AOI2.TIF"
@@ -32,11 +34,26 @@ def display_image(src, contours, labels, display_channels=[5,4,2]):
     plt.axis('off')
     plt.show()
 
-src = rasterio.open('AOI2.TIF')
-contours = segment_contours('AOI2.TIF',8)
+src = rasterio.open(FILENAME)
+contours = segment_contours(FILENAME,8)
+
 print(contours)
 labels = np.zeros(len(contours))
 for i in range(len(contours)):
   labels[i] = classify_segment(contours[i],src)
 print(labels)
-print(get_metrics(src,contours,labels,"test_sheet.csv"))
+# Visualization or further processing
+# For example, visualizing the classified contours with different colors:
+# image = src.read(3)
+# display_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)  # Convert to BGR format for visualization
+# colors = {True: (0,255,0), False: (255,0,0)}  # Define colors for each class
+# for i in range(len(contours)):
+#     cv2.drawContours(display_image, [contours[i]], -1, colors[labels[i]], 2)
+
+# # Display the result using matplotlib
+# plt.imshow(display_image)
+# plt.show()
+
+true_pos, false_pos, true_neg, false_neg, metric_labels = get_metrics(src,contours,labels,"test_sheet.csv")
+display_image(src,contours,metric_labels)
+print(true_pos, false_pos, true_neg, false_neg)

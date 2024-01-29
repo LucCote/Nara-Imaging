@@ -42,7 +42,9 @@ def transform_shape(shape, lats, longs):
 def point_in_shape(shape, point):
   pointS = Point(point)
   polygon = Polygon(shape)
-  return polygon.contains(pointS)
+  if polygon.contains(pointS):
+    return True
+  return polygon.exterior.distance(pointS) < 1e-4
 
 def get_metrics(src, contour_shapes, contour_tags, truth_file):
   lats, longs = load_coords(src)
