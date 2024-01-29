@@ -3,46 +3,37 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 
-def segment_contours(image_path, contour_channels = [7,8, 5], display_channels = [5,4, 2], min_contour_area=1, max_contour_area=5000):
+def segment_contours(image_path, contour_channel=5, display_channels=[5,4,2], min_contour_area=10, max_contour_area=2000):
     with rasterio.open(image_path) as src:
-        # Read the selected channels for contour segmentation
-        contour_bands = src.read(contour_channels)
+        # Read the selected channel for contour segmentation
+        contour_band = src.read(contour_channel)
 
-        # Combine the contour bands to create a grayscale image
-        combined_contour_band = np.mean(contour_bands, axis=0)
+        # Ensure contour band is 2D (grayscale)
+        if contour_band.ndim > 2:
+            contour_band = contour_band[0]  # Take the first band if it's not already 2D
 
-        # Normalize the combined contour band
-        normalized_contour_band = (combined_contour_band - np.min(combined_contour_band)) / (np.max(combined_contour_band) - np.min(combined_contour_band))
-
-        # Convert the normalized contour band to 8-bit
-        contour_band_8bit = (normalized_contour_band * 255).astype('uint8')
+        # Convert the contour band to 8-bit without normalization
+        contour_band_8bit = (contour_band / contour_band.max() * 255).astype('uint8')
 
         # Apply CLAHE
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
         clahe_image = clahe.apply(contour_band_8bit)
 
-        # Apply edge detection to enhance features
-        edges = cv2.Canny(clahe_image, 100, 200)
-
-        # Combine edge detection result with CLAHE image
-        combined_image = cv2.bitwise_or(clahe_image, edges)
-
-
-        # Apply Otsu's thresholding
-        _, binary_image = cv2.threshold(combined_image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        # Apply Adaptive Thresholding
+        adaptive_thresh = cv2.adaptiveThreshold(clahe_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 10)
+        
+        if np.mean(adaptive_thresh) > 127:
+            adaptive_thresh = cv2.bitwise_not(adaptive_thresh)
 
         # Find contours
-        contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(adaptive_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Filter contours by area
         contours = [contour for contour in contours if min_contour_area < cv2.contourArea(contour) < max_contour_area]
 
-        # # Print number of contours
-        # print(f"Number of contours found: {len(contours)}")
-
         # # Display binary image
-        # plt.imshow(binary_image, cmap='gray')
-        # plt.title("Binary Image")
+        # plt.imshow(adaptive_thresh, cmap='gray')
+        # plt.title("Adaptive Threshold Image")
         # plt.axis('off')
         # plt.show()
 
@@ -72,5 +63,8 @@ def segment_contours(image_path, contour_channels = [7,8, 5], display_channels =
         plt.title("Result with Contours")
         plt.axis('off')
         plt.show()
-        
+
         return contours
+
+# Use the function
+segment_contours('test.TIF')
