@@ -66,5 +66,4 @@ def segment_contours(image_path, contour_channel=5, display_channels=[5,4,2], mi
 
         return contours
 
-# Use the function
-segment_contours('test.TIF')
+
