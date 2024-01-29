@@ -53,6 +53,7 @@ def get_metrics(src, contour_shapes, contour_tags, truth_file):
   true_neg = 0
   false_neg = 0
   true_tags = [False for shape in contour_shapes]
+  metric_labels = [0 for shape in contour_shapes]
   for i in range(len(contour_shapes)):
      shape = contour_shapes[i]
      shape = np.squeeze(shape)
@@ -66,33 +67,39 @@ def get_metrics(src, contour_shapes, contour_tags, truth_file):
       true_pos += 1
      elif tag and not true_tags[i]:
       false_pos += 1
+      metric_labels[i] = 1
      elif not tag and not true_tags[i]:
       true_neg += 1
+      metric_labels[i] = 2
      elif not tag and true_tags[i]:
       false_neg += 1
-  return true_pos, false_pos, true_neg, false_neg
+      metric_labels[i] = 3
+  return true_pos, false_pos, true_neg, false_neg, metric_labels
 
 def segment_contours(image_path, contour_channel, min_contour_area=60, max_contour_area=5000):
     with rasterio.open(image_path) as src:
         # Read the selected channel for contour segmentation
-        contour_band = src.read(contour_channel)
+        contours = []
+        for i in range(1,9):
+          contour_band = src.read(contour_channel)
 
-        # Normalize the contour band
-        normalized_contour_band = (contour_band - np.min(contour_band)) / (np.max(contour_band) - np.min(contour_band))
+          # Normalize the contour band
+          normalized_contour_band = (contour_band - np.min(contour_band)) / (np.max(contour_band) - np.min(contour_band))
 
-        # Convert the normalized contour band to 8-bit
-        contour_band_8bit = (normalized_contour_band * 255).astype('uint8')
+          # Convert the normalized contour band to 8-bit
+          contour_band_8bit = (normalized_contour_band * 255).astype('uint8')
 
-        # Apply Otsu's thresholding
-        _, binary_image = cv2.threshold(contour_band_8bit, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+          # Apply Otsu's thresholding
+          _, binary_image = cv2.threshold(contour_band_8bit, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-        # Find contours on the binary image
-        contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+          # Find contours on the binary image
+          contours2, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Filter contours by area
-        contours = [contour for contour in contours if min_contour_area < cv2.contourArea(contour) < max_contour_area]
+          # Filter contours by area
+          contours += [contour for contour in contours2 if min_contour_area < cv2.contourArea(contour) < max_contour_area]
 
         return contours
+
 if __name__ == "__main__":
   src = rasterio.open('test_download.TIF')
   contours = segment_contours('test_download.TIF', 4)

@@ -34,7 +34,7 @@ def display_image(src, contours, labels, display_channels=[5,4,2]):
     plt.show()
 
 src = rasterio.open('AOI2.TIF')
-contours = segment_contours('AOI2.TIF', 4)
+contours = segment_contours('AOI2.TIF',8)
 
 print(contours)
 labels = np.zeros(len(contours))
