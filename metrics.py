@@ -29,7 +29,7 @@ def load_points(file):
       reader = csv.reader(csvfile)
       next(reader, None)  # skip the headers
       for row in reader:
-          points.append((float(row[0]),float(row[1])))
+          points.append((float(row[2]),float(row[1])))
   return points
 
 def transform_shape(shape, lats, longs):
@@ -56,6 +56,10 @@ def get_metrics(src, contour_shapes, contour_tags, truth_file):
   false_neg = 0
   true_tags = [False for shape in contour_shapes]
   metric_labels = [0 for shape in contour_shapes]
+  false_pos_s = ""
+  false_neg_s = ""
+  true_pos_s = ""
+  true_neg_s = ""
   for i in range(len(contour_shapes)):
      shape = contour_shapes[i]
      shape = np.squeeze(shape)
@@ -67,15 +71,63 @@ def get_metrics(src, contour_shapes, contour_tags, truth_file):
           break
      if tag and true_tags[i]:
       true_pos += 1
+      image_data=src.read()
+      image = src.read(1)
+      mask = np.zeros(image.shape, dtype=np.uint8)
+      cv2.drawContours(mask, [contour_shapes[i]], -1, color=255, thickness=-1)
+      segment_band_values = [band[mask == 255] for band in image_data]
+      arr = []
+      for j in range(0,8):
+        arr.append(np.median(segment_band_values[j]))
+      true_pos_s+=", ".join(str(num) for num in arr) + "\n"
      elif tag and not true_tags[i]:
       false_pos += 1
+      
+      image_data=src.read()
+      image = src.read(1)
+      mask = np.zeros(image.shape, dtype=np.uint8)
+      cv2.drawContours(mask, [contour_shapes[i]], -1, color=255, thickness=-1)
+      segment_band_values = [band[mask == 255] for band in image_data]
+      arr = []
+      for j in range(0,8):
+        arr.append(np.median(segment_band_values[j]))
+      false_pos_s+=", ".join(str(num) for num in arr) + "\n"
       metric_labels[i] = 1
      elif not tag and not true_tags[i]:
+      image_data=src.read()
+      image = src.read(1)
+      mask = np.zeros(image.shape, dtype=np.uint8)
+      cv2.drawContours(mask, [contour_shapes[i]], -1, color=255, thickness=-1)
+      segment_band_values = [band[mask == 255] for band in image_data]
+      arr = []
+      for j in range(0,8):
+        arr.append(np.median(segment_band_values[j]))
+      true_neg_s+=", ".join(str(num) for num in arr) + "\n"
+
       true_neg += 1
       metric_labels[i] = 2
      elif not tag and true_tags[i]:
+
+      image_data=src.read()
+      image = src.read(1)
+      mask = np.zeros(image.shape, dtype=np.uint8)
+      cv2.drawContours(mask, [contour_shapes[i]], -1, color=255, thickness=-1)
+      segment_band_values = [band[mask == 255] for band in image_data]
+      arr = []
+      for j in range(0,8):
+        arr.append(np.median(segment_band_values[j]))
+      false_neg_s+=", ".join(str(num) for num in arr) + "\n"
+
       false_neg += 1
       metric_labels[i] = 3
+  with open("false_neg.csv", "w") as text_file:
+    text_file.write(false_neg_s)
+  with open("false_pos.csv", "w") as text_file:
+    text_file.write(false_pos_s)
+  with open("true_neg.csv", "w") as text_file:
+    text_file.write(true_neg_s)
+  with open("true_pos.csv", "w") as text_file:
+    text_file.write(true_pos_s)
   return true_pos, false_pos, true_neg, false_neg, metric_labels
 
 def segment_contours(image_path, contour_channel, min_contour_area=60, max_contour_area=5000):

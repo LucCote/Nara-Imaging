@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 import time
+from shapely.geometry import Point, Polygon, MultiPoint
 
 def segment_and_classify(image_path, chunk_size=256, overlap=32, manual_threshold=50):
     with rasterio.open(image_path) as src:
@@ -118,20 +119,56 @@ def classify_segment(contour, src):
     mask = np.zeros(image.shape, dtype=np.uint8)
     cv2.drawContours(mask, [contour], -1, color=255, thickness=-1)
 
+    # print(contour)
+    # polygon = Polygon(np.squeeze(contour))
+    # if polygon.area < 0.0045*(polygon.length**2):
+    #     return False
+    rect = MultiPoint(np.squeeze(contour)).envelope
+    polygon = Polygon(np.squeeze(contour))
+    x, y = rect.exterior.coords.xy
+    # get length of bounding box edges
+    edge_length = (Point(x[0], y[0]).distance(Point(x[1], y[1])), Point(x[1], y[1]).distance(Point(x[2], y[2])))
+
+    # get length of polygon as the longest edge of the bounding box
+    square = max(edge_length)**2
+    if polygon.area < 0.1*square:
+        return False
+
     # Extract band data for the current segment
     segment_band_values = [band[mask == 255] for band in image_data]
     # Define your classification logic here
     # For example, based on mean value of the band data:
-    b1 = np.mean(segment_band_values[0])
-    b4 = np.mean(segment_band_values[3])
-    b7 = np.mean(segment_band_values[6])
+    b1 = np.median(segment_band_values[0])
+    b2 = np.median(segment_band_values[1])
+    b3 = np.median(segment_band_values[2])
+    b4 = np.median(segment_band_values[3])
+    b6 = np.median(segment_band_values[5])
+    b7 = np.median(segment_band_values[6])
+    b8 = np.median(segment_band_values[7])
 
     #one band 
-    normalized_diff = (b4-b7)/(b4+b7)
-    nara_threshold = .075672
-    threshold_std = 3*.007612
+    normalized_diff = (b2-b7)/(b2+b7)
+    nara_threshold = -0.45
+    threshold_std = 6*.007612
 
     if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
-        return True
-    else:
-        return False
+        # return True
+        # if b6 < 730:
+        #     return True
+        normalized_diff = (b2-b4)/(b4+b2)
+        nara_threshold = -.30264
+        threshold_std = .1
+        if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
+            # return True
+            normalized_diff = (b6-b1)/(b6+b1)
+            nara_threshold = .2783
+            threshold_std = .04
+            if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
+                # return True
+                normalized_diff = (b3-b1)/(b3+b1)
+                nara_threshold = .03794
+                threshold_std = .025
+                if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
+                    return True
+        
+    return False
