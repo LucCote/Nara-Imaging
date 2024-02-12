@@ -146,29 +146,15 @@ def classify_segment(contour, src):
     b7 = np.median(segment_band_values[6])
     b8 = np.median(segment_band_values[7])
 
-    #one band 
-    normalized_diff = (b2-b7)/(b2+b7)
-    nara_threshold = -0.45
-    threshold_std = 6*.007612
+    normalized_diff = (b7-b1)/(b7+b1)
+    nara_threshold = 0.3061
+    threshold_std = 1.5*.007612
 
-    if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
-        # return True
-        # if b6 < 730:
-        #     return True
-        normalized_diff = (b2-b4)/(b4+b2)
-        nara_threshold = -.30264
-        threshold_std = .1
+    if normalized_diff >= nara_threshold - threshold_std:
+        normalized_diff = (b4-b1)/(b4+b1)
+        nara_threshold = 0.1951
+        threshold_std = .05
         if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
-            # return True
-            normalized_diff = (b6-b1)/(b6+b1)
-            nara_threshold = .2783
-            threshold_std = .04
-            if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
-                # return True
-                normalized_diff = (b3-b1)/(b3+b1)
-                nara_threshold = .03794
-                threshold_std = .025
-                if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
-                    return True
+            return True
         
     return False
