@@ -11,4 +11,8 @@
 1. Launch the UI as described in the installation steps.
 2. Load a WorldView 2 multispectral tiff image (must include all 8 bands) to analyze using the "Upload TIF File" button located at the top of the screen
    - The image should then be displayed in the center of the screen
-3. (Optional) Select a polygon shapefile mask which outlines the boundaries of rivers in the uploaded images. This step enables the usage of separate classifiers for finding !Nara plants within a river channel and outside the river channel.
+3. (Optional) Select a polygon shapefile mask which outlines the boundaries of rivers in the uploaded images using the "Upload Channel Mask Shapefile" button. This step enables the usage of separate classifiers for finding !Nara plants within a river channel and outside the river channel
+   - This shapefile polygon must use latitude and longitude coordinates
+4. Analyze the image for !Nara plants by pressing the "Find !Nara" button at the bottom of the screen
+   - Note: this step may take some time to run, especially on large images
+5. After the analysis is complete download a shape file containing the outlines the found !Nara plants or a CSV containing the coordinates of centroids using the buttons below the "Find !Nara" button
