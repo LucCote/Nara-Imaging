@@ -1,4 +1,4 @@
-# Automated !Nara Mellon Identification Project
+# Automated !Nara Melon Identification Project
 
 ## Installation (Mac)
  1. [Download](https://github.com/LucCote/Nara-Imaging/archive/refs/heads/main.zip) and unzip or clone this repository
