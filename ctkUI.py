@@ -30,6 +30,7 @@ canvas = None
 src = None
 filename = None
 masks = None
+contours = None
 
 aftid = 0
 
@@ -56,6 +57,8 @@ def openFile():
     global masks
     masks = None
     filename = filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("tiff","*.tiff, *.tif"),("All files","*.*")))
+    if filename is None or len(filename) == 0:
+        return
     src = rasterio.open(filename)
     display_channels=[5,4,2]
     display_bands = src.read(display_channels)
@@ -67,6 +70,8 @@ def openFile():
 def openMask():
     global masks
     filename = filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("shape","*.shp"),("All files","*.*")))
+    if filename is None or len(filename) == 0:
+        return
     geometries = []
     # Open the shapefile
     with fiona.open(filename) as shapefile:
@@ -89,7 +94,10 @@ def csv():
     global src
     if contours == None:
         return
-    write_csv(contours, labels, src)
+    f = ctk.filedialog.asksaveasfilename(initialdir="", filetypes=(("csv","*.csv")))
+    if f is None or len(f) == 0: # asksaveasfile return `None` if dialog closed with "cancel".
+        return
+    write_csv(f,contours, labels, src)
 
 def shapefile():
     global contours
@@ -97,7 +105,10 @@ def shapefile():
     global src
     if contours == None:
         return
-    write_shape(contours, labels, src)
+    f = ctk.filedialog.asksaveasfilename(initialdir="", filetypes=(("shape","*.shp")))
+    if f is None or len(f) == 0: # asksaveasfile return `None` if dialog closed with "cancel".
+        return
+    write_shape(f,contours, labels, src)
 
 def demo():
     global fig
@@ -164,8 +175,8 @@ root.title('!Nara Image Analysis / !Nara Beeldanalise')
 ctk.set_default_color_theme("green")
 
 # Position window in center screen
-w = 600 # width for the Tk root
-h = 700 # height for the Tk root
+w = 1000 # width for the Tk root
+h = 800 # height for the Tk root
 
 # Get screen width and height
 ws = root.winfo_screenwidth() # width of the screen
@@ -213,23 +224,44 @@ ndrFrame.place(relx=0.05, rely=0.05, anchor=NW)
 ndr = ctk.CTkLabel(master=ndrFrame, text="Normalized Difference Ratios (Channel)")
 ndr.grid(row=0, column=0, padx=10)
 for i in range(len(channel_classifiers)):
+    frameclassifier = ctk.CTkFrame(master=ndrFrame)
+    frameclassifier.grid(row=i+1, column=0, padx=0, pady=5)
+
     b1,b2,lt,ut = channel_classifiers[i]
     vb1,vb2,vlt,vut = channel_classifier_vars[i]
 
+    framech1 = ctk.CTkFrame(master=frameclassifier)
+    framech1.grid(row=0, column=0, padx=10, pady=3)
     channels = ["(1) Coastal", "(2) Blue", "(3) Green", "(4) Yellow", "(5) Red", "(6) Red Edge", "(7) NIR1", "(8) NIR2"]
-    
-    ch1 = ctk.CTkOptionMenu(master=ndrFrame, values=channels, variable=vb1)
+    labelch1 = ctk.CTkLabel(master=framech1, text="Primary Channel")
+    ch1 = ctk.CTkOptionMenu(master=framech1, values=channels, variable=vb1)
     vb1.set(channels[b1-1])
-    ch1.grid(row=2*i+1, column=0, padx=10, pady=5)
-    ch2 = ctk.CTkOptionMenu(master=ndrFrame, values=channels, variable=vb2)
+    labelch1.grid(row=0, column=0, padx=10, pady=3)
+    ch1.grid(row=0, column=1, padx=10, pady=5)
+
+    framech2 = ctk.CTkFrame(master=frameclassifier)
+    framech2.grid(row=0, column=1, padx=10, pady=3)
+    labelch2 = ctk.CTkLabel(master=framech2, text="Difference Channel")
+    labelch2.grid(row=0, column=0, padx=10, pady=3)
+    ch2 = ctk.CTkOptionMenu(master=framech2, values=channels, variable=vb2)
     vb2.set(channels[b2-1])
-    ch2.grid(row=2*i+1, column=1, padx=10, pady=5)
-    lower_threshold = ctk.CTkEntry(master=ndrFrame, textvariable=vlt)
+    ch2.grid(row=0, column=1, padx=10, pady=5)
+
+    framellt = ctk.CTkFrame(master=frameclassifier)
+    framellt.grid(row=1, column=0, padx=10, pady=3)
+    labellt = ctk.CTkLabel(master=framellt, text="Lower Threshold")
+    labellt.grid(row=0, column=0, padx=10, pady=3)
+    lower_threshold = ctk.CTkEntry(master=framellt, textvariable=vlt)
     vlt.set(str(lt))
-    lower_threshold.grid(row=2*i+2, column=0, padx=10, pady=5)
-    upper_threshold = ctk.CTkEntry(master=ndrFrame, textvariable=vut)
+    lower_threshold.grid(row=0, column=1, padx=10, pady=3)
+    
+    frameut = ctk.CTkFrame(master=frameclassifier)
+    frameut.grid(row=1, column=1, padx=10, pady=3)
+    labelut = ctk.CTkLabel(master=frameut, text="Upper Threshold")
+    labelut.grid(row=0, column=0, padx=10, pady=3)
+    upper_threshold = ctk.CTkEntry(master=frameut, textvariable=vut)
     vut.set(ut)
-    upper_threshold.grid(row=2*i+2, column=1, padx=10, pady=5)
+    upper_threshold.grid(row=0, column=1, padx=10, pady=3)
 
 def set():
     global channel_classifiers
@@ -252,23 +284,44 @@ ndrFrame.place(relx=0.05, rely=0.5, anchor=NW)
 ndr = ctk.CTkLabel(master=ndrFrame, text="Normalized Difference Ratios (Outside Channel)")
 ndr.grid(row=0, column=0, padx=10)
 for i in range(len(dune_classifiers)):
+    frameclassifier = ctk.CTkFrame(master=ndrFrame)
+    frameclassifier.grid(row=i+1, column=0, padx=0, pady=5)
+
     b1,b2,lt,ut = dune_classifiers[i]
     vb1,vb2,vlt,vut = dune_classifier_vars[i]
 
+    framech1 = ctk.CTkFrame(master=frameclassifier)
+    framech1.grid(row=0, column=0, padx=10, pady=3)
     channels = ["(1) Coastal", "(2) Blue", "(3) Green", "(4) Yellow", "(5) Red", "(6) Red Edge", "(7) NIR1", "(8) NIR2"]
-    
-    ch1 = ctk.CTkOptionMenu(master=ndrFrame, values=channels, variable=vb1)
+    labelch1 = ctk.CTkLabel(master=framech1, text="Primary Channel")
+    ch1 = ctk.CTkOptionMenu(master=framech1, values=channels, variable=vb1)
     vb1.set(channels[b1-1])
-    ch1.grid(row=2*i+1, column=0, padx=10, pady=5)
-    ch2 = ctk.CTkOptionMenu(master=ndrFrame, values=channels, variable=vb2)
+    labelch1.grid(row=0, column=0, padx=10, pady=3)
+    ch1.grid(row=0, column=1, padx=10, pady=3)
+
+    framech2 = ctk.CTkFrame(master=frameclassifier)
+    framech2.grid(row=0, column=1, padx=10, pady=3)
+    labelch2 = ctk.CTkLabel(master=framech2, text="Difference Channel")
+    labelch2.grid(row=0, column=0, padx=10, pady=3)
+    ch2 = ctk.CTkOptionMenu(master=framech2, values=channels, variable=vb2)
     vb2.set(channels[b2-1])
-    ch2.grid(row=2*i+1, column=1, padx=10, pady=5)
-    lower_threshold = ctk.CTkEntry(master=ndrFrame, textvariable=vlt)
+    ch2.grid(row=0, column=1, padx=10, pady=3)
+
+    framellt = ctk.CTkFrame(master=frameclassifier)
+    framellt.grid(row=1, column=0, padx=10, pady=3)
+    labellt = ctk.CTkLabel(master=framellt, text="Lower Threshold")
+    labellt.grid(row=0, column=0, padx=10, pady=3)
+    lower_threshold = ctk.CTkEntry(master=framellt, textvariable=vlt)
     vlt.set(str(lt))
-    lower_threshold.grid(row=2*i+2, column=0, padx=10, pady=5)
-    upper_threshold = ctk.CTkEntry(master=ndrFrame, textvariable=vut)
+    lower_threshold.grid(row=0, column=1, padx=10, pady=3)
+
+    frameut = ctk.CTkFrame(master=frameclassifier)
+    frameut.grid(row=1, column=1, padx=10, pady=3)
+    labelut = ctk.CTkLabel(master=frameut, text="Upper Threshold")
+    labelut.grid(row=0, column=0, padx=10, pady=3)
+    upper_threshold = ctk.CTkEntry(master=frameut, textvariable=vut)
     vut.set(ut)
-    upper_threshold.grid(row=2*i+2, column=1, padx=10, pady=5)
+    upper_threshold.grid(row=0, column=1, padx=10, pady=3)
 
 def setdune():
     global dune_classifiers
@@ -287,7 +340,7 @@ welcomeText = ctk.CTkLabel(master=display, text="Upload an image using the butto
 uploadButton = ctk.CTkButton(master=display, text="Upload TIF file / Laai TIF-lêer op", command=openFile)
 maskButton = ctk.CTkButton(master=display, text="Upload Channel Mask Shapefile", command=openMask)
 startButton = ctk.CTkButton(master=display, text="Find !Nara", command=demo)
-csvButton = ctk.CTkButton(master=display, text="Download !Nara Centroid Csv", command=csv)
+csvButton = ctk.CTkButton(master=display, text="Download !Nara Centroid CSV", command=csv)
 shapeButton = ctk.CTkButton(master=display, text="Download !Nara Shapefile", command=shapefile)
 
 # Create UI elements
@@ -297,8 +350,8 @@ welcomeText.place(relx=0.5, rely=0.05, anchor=CENTER)
 uploadButton.place(relx=0.5, rely=0.12, anchor=CENTER)
 maskButton.place(relx=0.5, rely=0.18, anchor=CENTER)
 startButton.place(relx=0.5, rely=0.9, anchor=CENTER)
-csvButton.place(relx=0.25, rely=0.96, anchor=CENTER)
-shapeButton.place(relx=0.75, rely=0.96, anchor=CENTER)
+csvButton.place(relx=0.35, rely=0.96, anchor=CENTER)
+shapeButton.place(relx=0.65, rely=0.96, anchor=CENTER)
 
 def quitter():
     tkinter.Tk.quit(root)

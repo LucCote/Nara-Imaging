@@ -23,6 +23,8 @@ buttonText="Upload TIF File"
 uploadButton = Button(root, text=buttonText, command=openFile)
 welcomeText = Label(root, text="Upload an image using the button below. The image must be a multispectral image with a .tif extension.")
 
+
+
 # Create combobox to choose language
 clicked = StringVar()
 languages = ["English","Afrikaans"]

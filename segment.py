@@ -37,32 +37,32 @@ def segment_contours(image_path, contour_channel=5, display_channels=[5,4,2], mi
         # plt.axis('off')
         # plt.show()
 
-        # Read and normalize display bands
-        display_bands = src.read(display_channels)
-        normalized_display_bands = [(band - np.min(band)) / (np.max(band) - np.min(band)) for band in display_bands]
-        display_image = np.dstack(normalized_display_bands)
-        display_image_8bit = (display_image * 255).astype('uint8')
+        # # Read and normalize display bands
+        # display_bands = src.read(display_channels)
+        # normalized_display_bands = [(band - np.min(band)) / (np.max(band) - np.min(band)) for band in display_bands]
+        # display_image = np.dstack(normalized_display_bands)
+        # display_image_8bit = (display_image * 255).astype('uint8')
 
-        # Create a canvas for drawing contours
-        contour_canvas = np.zeros_like(display_image_8bit)
+        # # Create a canvas for drawing contours
+        # contour_canvas = np.zeros_like(display_image_8bit)
 
-        # Draw contours
-        cv2.drawContours(contour_canvas, contours, -1, (255, 0, 0), 1)
+        # # Draw contours
+        # cv2.drawContours(contour_canvas, contours, -1, (255, 0, 0), 1)
 
-        # # Display image with contours
-        # plt.imshow(contour_canvas)
-        # plt.title("Contours")
+        # # # Display image with contours
+        # # plt.imshow(contour_canvas)
+        # # plt.title("Contours")
+        # # plt.axis('off')
+        # # plt.show()
+
+        # # Overlay contours on display image
+        # result_image = cv2.addWeighted(display_image_8bit, 1, contour_canvas, 0.5, 0)
+
+        # # Display result
+        # plt.imshow(result_image)
+        # plt.title("Result with Contours")
         # plt.axis('off')
         # plt.show()
-
-        # Overlay contours on display image
-        result_image = cv2.addWeighted(display_image_8bit, 1, contour_canvas, 0.5, 0)
-
-        # Display result
-        plt.imshow(result_image)
-        plt.title("Result with Contours")
-        plt.axis('off')
-        plt.show()
 
         return contours
 

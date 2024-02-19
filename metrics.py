@@ -29,7 +29,7 @@ def load_points(file):
       reader = csv.reader(csvfile)
       next(reader, None)  # skip the headers
       for row in reader:
-          points.append((float(row[2]),float(row[1])))
+          points.append((float(row[1]),float(row[0])))
   return points
 
 def transform_shape(shape, lats, longs):
