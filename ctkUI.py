@@ -1,25 +1,16 @@
 import tkinter
-import tkinter as tk
-from tkinter import *
-from PIL import ImageTk,Image
-from tkinter import ttk
-from tkinter import filedialog
+from tkinter import NW, NE, CENTER
 import customtkinter as ctk
 import rasterio
 import numpy as np
-from metrics import get_metrics
 from segment import segment_contours
-# from contour import segment_contours
 from analyze import classify_segment
 import matplotlib.pyplot as plt
 import cv2
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
-                                               NavigationToolbar2Tk)
-from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 import fiona
 from shapely.geometry import shape, Polygon
-from metrics import get_metrics, load_coords, transform_shape
+from metrics import load_coords, transform_shape
 from output import write_csv, write_shape
 
 
@@ -31,8 +22,6 @@ src = None
 filename = None
 masks = None
 contours = None
-
-aftid = 0
 
 # Displaying images
 def display_im(image):
@@ -56,7 +45,7 @@ def openFile():
     global filename
     global masks
     masks = None
-    filename = filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("tiff","*.tiff, *.tif"),("All files","*.*")))
+    filename = ctk.filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("tiff","*.tiff, *.tif"),("All files","*.*")))
     if filename is None or len(filename) == 0:
         return
     src = rasterio.open(filename)
@@ -69,7 +58,7 @@ def openFile():
 
 def openMask():
     global masks
-    filename = filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("shape","*.shp"),("All files","*.*")))
+    filename = ctk.filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("shape","*.shp"),("All files","*.*")))
     if filename is None or len(filename) == 0:
         return
     geometries = []
@@ -94,7 +83,7 @@ def csv():
     global src
     if contours == None:
         return
-    f = ctk.filedialog.asksaveasfilename(initialdir="", filetypes=(("csv","*.csv")))
+    f = ctk.filedialog.asksaveasfilename(initialdir="", filetypes=(("csv","*.csv"),("All files","*.*")))
     if f is None or len(f) == 0: # asksaveasfile return `None` if dialog closed with "cancel".
         return
     write_csv(f,contours, labels, src)
@@ -105,7 +94,7 @@ def shapefile():
     global src
     if contours == None:
         return
-    f = ctk.filedialog.asksaveasfilename(initialdir="", filetypes=(("shape","*.shp")))
+    f = ctk.filedialog.asksaveasfilename(initialdir="", filetypes=(("shape","*.shp"),("All files","*.*")))
     if f is None or len(f) == 0: # asksaveasfile return `None` if dialog closed with "cancel".
         return
     write_shape(f,contours, labels, src)
@@ -127,12 +116,8 @@ def demo():
     contours = segment_contours(filename,5)
     lats,longs = load_coords(src)
 
-    # print(contours)
     labels = np.zeros(len(contours))
     for i in range(len(contours)):
-        # toremove = []
-# for i in range(len(contours)):
-#   contour = np.squeeze(contours[i])
         if masks != None:
             coords_shape = Polygon(transform_shape(np.squeeze(contours[i]), lats, longs))
             found = False
@@ -146,9 +131,7 @@ def demo():
                 labels[i] = classify_segment(contours[i],src, dune_classifiers)
         else:
             labels[i] = classify_segment(contours[i],src, channel_classifiers)
-    print(labels)
-    # Visualization or further processing
-    # For example, visualizing the classified contours with different colors:
+
     display_channels=[5,4,2]
     display_bands = src.read(display_channels)
     normalized_display_bands = [(band - np.min(band)) / (np.max(band) - np.min(band)) for band in display_bands]
@@ -157,13 +140,11 @@ def demo():
 
     # Create a canvas for drawing contours
     contour_canvas = np.zeros_like(display_image_8bit)
-
     # Draw contours
     for i in range(len(contours)):
         if not labels[i]:
            continue
         cv2.drawContours(display_image_8bit, [contours[i]], -1, (0,255,0), 2)
-
     # Overlay contours on display image
     result_image = cv2.addWeighted(display_image_8bit, 1, contour_canvas, 0.5, 0)
 
@@ -220,7 +201,7 @@ channel_classifier_vars = [(ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.
 
 # Add labels to advanced settings options
 ndrFrame = ctk.CTkFrame(master=advSettings)
-ndrFrame.place(relx=0.05, rely=0.05, anchor=NW)
+ndrFrame.place(relx=0.5, rely=0.25, anchor=CENTER)
 ndr = ctk.CTkLabel(master=ndrFrame, text="Normalized Difference Ratios (Channel)")
 ndr.grid(row=0, column=0, padx=10)
 for i in range(len(channel_classifiers)):
@@ -280,7 +261,7 @@ dune_classifier_vars = [(ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.Str
 
 # Add labels to advanced settings options
 ndrFrame = ctk.CTkFrame(master=advSettings)
-ndrFrame.place(relx=0.05, rely=0.5, anchor=NW)
+ndrFrame.place(relx=0.5, rely=0.75, anchor=CENTER)
 ndr = ctk.CTkLabel(master=ndrFrame, text="Normalized Difference Ratios (Outside Channel)")
 ndr.grid(row=0, column=0, padx=10)
 for i in range(len(dune_classifiers)):
