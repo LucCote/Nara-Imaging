@@ -153,7 +153,7 @@ def demo():
 
 root = ctk.CTk()
 root.title('!Nara Image Analysis / !Nara Beeldanalise')
-ctk.set_default_color_theme("green")
+ctk.set_default_color_theme("dark-blue")
 
 # Position window in center screen
 w = 1000 # width for the Tk root
