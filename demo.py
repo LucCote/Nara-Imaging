@@ -1,13 +1,16 @@
 import rasterio
 import numpy as np
-from metrics import get_metrics
+from metrics import get_metrics, load_coords, transform_shape
 from segment import segment_contours
 from analyze import classify_segment
 import matplotlib.pyplot as plt
 import cv2
+from output import write_shape
+import fiona
+from shapely.geometry import shape, Polygon
 
 
-FILENAME = "delta_test.tif"
+FILENAME = "testing_image.tif"
 
 def display_image(src, contours, labels, display_channels=[5,4,2]):
    # Read and normalize display bands
@@ -22,6 +25,8 @@ def display_image(src, contours, labels, display_channels=[5,4,2]):
     # Draw contours
     colors = {0: (0,255,0), 1: (255,0,0), 2:(0,255,255), 3:(255, 165, 0)}  # Define colors for each class
     for i in range(len(contours)):
+        if labels[i] == 2:
+           continue
         cv2.drawContours(display_image_8bit, [contours[i]], -1, colors[labels[i]], 2)
 
     # Overlay contours on display image
@@ -33,19 +38,57 @@ def display_image(src, contours, labels, display_channels=[5,4,2]):
     plt.axis('off')
     plt.show()
 
+def read_shapefile(file):
+  geometries = []
+  # Open the shapefile
+  with fiona.open(file) as shapefile:
+      # Iterate over the records
+      for record in shapefile:
+          
+          # Get the geometry from the record
+          geometry = shape(record['geometry'])
+          geometries.append(geometry)
+  return geometries
+
+
+# channel_masks = read_shapefile("test_mask_2.shp")
+
 src = rasterio.open(FILENAME)
 
 contours = segment_contours(FILENAME,5)
 
-labels = np.zeros(len(contours))
-for i in range(len(contours)):
-  labels[i] = classify_segment(contours[i],src)
-print(labels)
+# lats,longs = load_coords(src)
 
-true_pos, false_pos, true_neg, false_neg, metric_labels = get_metrics(src,contours,labels,"delta_test.csv")
+# toremove = []
+# for i in range(len(contours)):
+#   contour = np.squeeze(contours[i])
+#   coords_shape = Polygon(transform_shape(contour, lats, longs))
+#   found = False
+#   for mask in channel_masks:
+#     if coords_shape.intersects(mask):
+#        found = True
+#        break
+#   if not found:
+#      toremove.append(i)
+
+filtered_contours = contours
+# for idx, ele in enumerate(contours): 
+#   # checking if element not present in index list
+#   if idx not in toremove:
+#       filtered_contours.append(ele)
+
+labels = np.zeros(len(filtered_contours))
+for i in range(len(filtered_contours)):
+  labels[i] = classify_segment(filtered_contours[i],src)
+
+
+
+true_pos, false_pos, true_neg, false_neg, metric_labels = get_metrics(src,filtered_contours,labels,"channel_testing_data.csv")
 print(true_pos, false_pos, true_neg, false_neg)
 
-display_image(src,contours,metric_labels)
+display_image(src,filtered_contours,metric_labels)
+
+write_shape(filtered_contours, labels, src)
 
 # Visualization or further processing
 # For example, visualizing the classified contours with different colors:

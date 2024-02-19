@@ -113,7 +113,7 @@ if __name__ == "__main__":
     print(f"The process took {end_time - start_time} seconds.")
 
 
-def classify_segment(contour, src):
+def classify_segment(contour, src, classifiers):
     image_data=src.read()
     image = src.read(1)
     mask = np.zeros(image.shape, dtype=np.uint8)
@@ -142,19 +142,35 @@ def classify_segment(contour, src):
     b2 = np.median(segment_band_values[1])
     b3 = np.median(segment_band_values[2])
     b4 = np.median(segment_band_values[3])
+    b5 = np.median(segment_band_values[3])
     b6 = np.median(segment_band_values[5])
     b7 = np.median(segment_band_values[6])
     b8 = np.median(segment_band_values[7])
+    bands = [b1,b2,b3,b4,b5,b6,b7,b8]
 
-    normalized_diff = (b7-b1)/(b7+b1)
-    nara_threshold = 0.3061
-    threshold_std = 1.5*.007612
+    for i in range(len(classifiers)):
+        bpos = bands[classifiers[i][0]-1]
+        bneg = bands[classifiers[i][1]-1]
+        normalized_diff = (bpos-bneg)/(bpos+bneg)
+        threshold_low = classifiers[i][2]
+        threshold_high = classifiers[i][3]
+        if normalized_diff < threshold_low or normalized_diff > threshold_high:
+            return False
+    
+    return True
 
-    if normalized_diff >= nara_threshold - threshold_std:
-        normalized_diff = (b4-b1)/(b4+b1)
-        nara_threshold = 0.1951
-        threshold_std = .05
-        if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
-            return True
+        
+
+    # normalized_diff = (b7-b1)/(b7+b1)
+    # nara_threshold = 0.3061
+    # threshold_std = 2*.007612
+
+    # if normalized_diff >= nara_threshold - threshold_std:
+    #     normalized_diff = (b4-b1)/(b4+b1)
+    #     nara_threshold = 0.1951
+    #     threshold_std = .12
+    #     # threshold_std = .05
+    #     if normalized_diff <= nara_threshold + threshold_std and normalized_diff >= nara_threshold - threshold_std:
+    #         return True
         
     return False
