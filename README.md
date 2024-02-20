@@ -15,4 +15,8 @@
    - This shapefile polygon must use latitude and longitude coordinates
 4. Analyze the image for !Nara plants by pressing the "Find !Nara" button at the bottom of the screen
    - Note: this step may take some time to run, especially on large images
+   - One can also toggle the option to search for !Nara outside the channel mask uploaded in step 3.
 5. After the analysis is complete download a shape file containing the outlines the found !Nara plants or a CSV containing the coordinates of centroids using the buttons below the "Find !Nara" button
+
+#### Classifier Settings
+The advanced settings page enables the user to adjust the classifier values. The way in which the software classifies contours is through the use of a 2-band mnormalized difference schema where we check if the difference between two bands scaled by their sum is within a certain value threshold. In the advanced settings the bands used in classification in addition to the lower and upper thresholds can be adjusted to specific image conditions as the researcher sees fit.
