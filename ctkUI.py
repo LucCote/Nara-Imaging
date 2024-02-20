@@ -22,6 +22,7 @@ src = None
 filename = None
 masks = None
 contours = None
+dunes = False
 
 # Displaying images
 def display_im(image):
@@ -30,7 +31,7 @@ def display_im(image):
     global ax
     global canvas
     global im
-    global aftid
+    global dunes
     fig, ax = plt.subplots()
     fig.set_size_inches(3,3)
     im = ax.imshow(image)
@@ -127,7 +128,7 @@ def demo():
                 break
             if found:
                 labels[i] = classify_segment(contours[i],src, channel_classifiers)
-            else:
+            elif dunes:
                 labels[i] = classify_segment(contours[i],src, dune_classifiers)
         else:
             labels[i] = classify_segment(contours[i],src, channel_classifiers)
@@ -313,6 +314,10 @@ def setdune():
         dune_classifiers[i][2] = float(dune_classifier_vars[i][2].get())
         dune_classifiers[i][3] = float(dune_classifier_vars[i][3].get())
 
+def toggle_dune():
+    global dunes
+    dunes = not dunes
+
 button = ctk.CTkButton(master=ndrFrame, text="Set", command=setdune)
 button.grid(row=2*len(dune_classifiers)+1, column=0, padx=10, pady=10)
 
@@ -323,14 +328,15 @@ maskButton = ctk.CTkButton(master=display, text="Upload Channel Mask Shapefile",
 startButton = ctk.CTkButton(master=display, text="Find !Nara", command=demo)
 csvButton = ctk.CTkButton(master=display, text="Download !Nara Centroid CSV", command=csv)
 shapeButton = ctk.CTkButton(master=display, text="Download !Nara Shapefile", command=shapefile)
-
+dunesButton = ctk.CTkCheckBox(master=display, text="Outside Channel Analysis (beta)", command=toggle_dune, onvalue="on", offvalue="off")
 # Create UI elements
 
 # Put UI elements on the screen
 welcomeText.place(relx=0.5, rely=0.05, anchor=CENTER)
 uploadButton.place(relx=0.5, rely=0.12, anchor=CENTER)
 maskButton.place(relx=0.5, rely=0.18, anchor=CENTER)
-startButton.place(relx=0.5, rely=0.9, anchor=CENTER)
+startButton.place(relx=0.35, rely=0.9, anchor=CENTER)
+dunesButton.place(relx=0.65, rely=0.9, anchor=CENTER)
 csvButton.place(relx=0.35, rely=0.96, anchor=CENTER)
 shapeButton.place(relx=0.65, rely=0.96, anchor=CENTER)
 
