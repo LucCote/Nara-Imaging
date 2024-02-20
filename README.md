@@ -7,6 +7,10 @@
  3. Install the required python libraries using the command ```pip install -r requirements.txt```
  4. Launch the user interface by running the command ```python ctkUI.py```
 
+## Installation (Windows)
+1. Install Python
+2. 
+
 ## Usage
 1. Launch the UI as described in the installation steps.
 2. Load a WorldView 2 multispectral tiff image (must include all 8 bands) to analyze using the "Upload TIF File" button located at the top of the screen
