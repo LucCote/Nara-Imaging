@@ -19,7 +19,7 @@
    - This shapefile polygon must use latitude and longitude coordinates (WGS84)
 4. Analyze the image for !Nara plants by pressing the "Find !Nara" button at the bottom of the screen
    - Note: this step may take some time to run, especially on large images
-   - One can also toggle the option to search for !Nara outside the channel mask uploaded in step 3.
+   - One can also toggle the option to search for !Nara outside the channel mask uploaded in step 3
 5. After the analysis is complete download a shape file containing the outlines the found !Nara plants or a CSV containing the coordinates of centroids using the buttons below the "Find !Nara" button
 
 ## Classifier Settings
