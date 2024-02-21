@@ -30,7 +30,7 @@
 ## Usage
 1. Launch the UI as described in the installation steps.
 2. Load a WorldView 2 multispectral tiff image (must include all 8 bands) to analyze using the "Upload TIF File" button located at the top of the screen
-   - Click [here](https://github.com/LucCote/Nara-Imaging/raw/main/Testing_Image.tif.zip) to download an image that can be used to run the algorithm and test its functionality
+   - Click [here](https://github.com/LucCote/Nara-Imaging/raw/main/demo_data.zip) to download an image and a channel mask that can be used to run the algorithm and test its functionality
    - The image should then be displayed in the center of the screen
 3. (Optional) Select a polygon shapefile mask which outlines the boundaries of rivers in the uploaded images using the "Upload Channel Mask Shapefile" button. This step enables the usage of separate classifiers for finding !Nara plants within a river channel and outside the river channel
    - This shapefile polygon must use latitude and longitude coordinates (WGS84)
