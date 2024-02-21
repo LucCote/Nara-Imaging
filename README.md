@@ -9,12 +9,12 @@
 
 ## Installation (Windows)
 
-# Python Installation
+### Python Installation
 1. Go to your Start menu (lower left Windows icon), type "Microsoft Store", select the link to open the store.
 2. Once the store is open, select Search from the upper-right menu and enter "Python". Select which version of Python you would like to use from the results under Apps (recommend the most recent). Once you've determined which version you would like to install, select Get.
 3. Once Python has completed the downloading and installation process, open Windows PowerShell using the Start menu (lower left Windows icon). Once PowerShell is open, enter the command ```Python --version``` to confirm that Python3 has installed on your machine. Also confirm that pip is istalled with the command ```pip --version ```
 
- # VS Code Installation
+ ### VS Code Installation
  1. To install VS Code, download VS Code for Windows: https://code.visualstudio.com.
  2. To connect VS Code and Python, search for Python in the extensions menu (Ctrl+Shift+X) and install.
  3. Once you've installed the Python extension, select a Python 3 interpreter by opening the Command Palette (Ctrl+Shift+P), start typing the command Python: Select Interpreter to search, then select the command.
