@@ -19,9 +19,10 @@
  2. To connect VS Code and Python, search for Python in the extensions menu (Ctrl+Shift+X) and install.
  3. Once you've installed the Python extension, select a Python 3 interpreter by opening the Command Palette (Ctrl+Shift+P), start typing the command Python: Select Interpreter to search, then select the command.
  4. To open the terminal in VS Code, select View > Terminal, or alternatively use the shortcut Ctrl+` (using the backtick character). The default terminal is PowerShell.
- 5. Inside your VS Code terminal, open Python by simply entering the command: python
- 6. Install the required python libraries using the command ```pip install -r requirements.txt```
- 7. Launch the user interface by running the command ```python ctkUI.py```
+ 5. [Download](https://github.com/LucCote/Nara-Imaging/archive/refs/heads/main.zip) and unzip or clone this repository
+ 6. Inside your VS Code terminal, open Python by simply entering the command: python
+ 7. Install the required python libraries using the command ```pip install -r requirements.txt```
+ 8. Launch the user interface by running the command ```python ctkUI.py```
 
 
 ## Usage
