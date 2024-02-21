@@ -76,10 +76,10 @@ filtered_contours = contours
 #   # checking if element not present in index list
 #   if idx not in toremove:
 #       filtered_contours.append(ele)
-
+channel_classifiers = [[7,1,.29,100], [4,1,.12,.22]]
 labels = np.zeros(len(filtered_contours))
 for i in range(len(filtered_contours)):
-  labels[i] = classify_segment(filtered_contours[i],src)
+  labels[i] = classify_segment(filtered_contours[i],src, channel_classifiers)
 
 
 
