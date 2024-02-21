@@ -41,3 +41,7 @@
 
 ## Classifier Settings
 The advanced settings page enables the user to adjust the classifier values. The way in which the software classifies contours is through the use of a 2-band normalized difference schema where we check if the difference between two bands scaled by their sum is within a certain value threshold. In the advanced settings, the bands used in classification in addition to the lower and upper thresholds can be adjusted to specific image conditions as the researcher sees fit. After every new image upload the settings will reset to default. 
+
+## Additional Help
+For additional help for windows installation see: https://learn.microsoft.com/en-us/windows/python/beginners 
+
