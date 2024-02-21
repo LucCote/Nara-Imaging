@@ -8,8 +8,12 @@
  4. Launch the user interface by running the command ```python ctkUI.py```
 
 ## Installation (Windows)
-1. Install Python
-2. 
+1. Go to your Start menu (lower left Windows icon), type "Microsoft Store", select the link to open the store.
+2. Once the store is open, select Search from the upper-right menu and enter "Python". Select which version of Python you would like to use from the results under Apps (recommend the most recent). Once you've determined which version you would like to install, select Get.
+3. Once Python has completed the downloading and installation process, open Windows PowerShell using the Start menu (lower left Windows icon). Once PowerShell is open, enter the command ```Python --version``` to confirm that Python3 has installed on your machine. Also confirm that pip is istalled with the command ```pip --version ```
+4. 
+
+
 
 ## Usage
 1. Launch the UI as described in the installation steps.
