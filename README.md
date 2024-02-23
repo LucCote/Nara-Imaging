@@ -22,7 +22,7 @@
  5. [Download](https://github.com/LucCote/Nara-Imaging/archive/refs/heads/main.zip) and unzip or clone this repository
  6. Inside your VS Code terminal, open Python by simply entering the command: python
  7. Navigate to the downloaded repository folder
-    - Example naviagtion command may be ```cd Downloads/Nara-Imaging-main```
+    - Example naviagtion command may be ```os.chdir(Downloads/Nara-Imaging-main)```
  8. Install the required python libraries using the command ```pip install -r requirements.txt```
  9. Launch the user interface by running the command ```python ctkUI.py```
 
