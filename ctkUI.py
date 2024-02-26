@@ -113,12 +113,19 @@ def demo():
     global contours
     global labels
     display_im(src.read(1))
-
+    progressbar = ctk.CTkProgressBar(master=root)
+    progressbar.set(0)
+    progressbar.place(relx=0.5, rely=0.5, anchor=CENTER)
+    root.update_idletasks()
     contours = segment_contours(filename,5)
+    progressbar.set(0.1)
+    root.update_idletasks()
     lats,longs = load_coords(src)
 
     labels = np.zeros(len(contours))
     for i in range(len(contours)):
+        progressbar.set(0.1+0.9*(float(i)/len(contours)))
+        root.update_idletasks()
         if masks != None:
             coords_shape = Polygon(transform_shape(np.squeeze(contours[i]), lats, longs))
             found = False
@@ -148,7 +155,7 @@ def demo():
         cv2.drawContours(display_image_8bit, [contours[i]], -1, (0,255,0), 2)
     # Overlay contours on display image
     result_image = cv2.addWeighted(display_image_8bit, 1, contour_canvas, 0.5, 0)
-
+    progressbar.destroy()
 
     display_im(result_image)
 

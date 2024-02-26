@@ -52,52 +52,60 @@ def read_shapefile(file):
 
 
 # channel_masks = read_shapefile("test_mask_2.shp")
+files = ["nara_testing/test2.tif","nara_testing/test3.tif","nara_testing/test4.tif"]
+metrics = ["nara_testing/test2.csv","nara_testing/test3.csv","nara_testing/test4.csv"]
+masks = ["nara_testing/test2.shp","nara_testing/test3.shp","nara_testing/test4.shp"]
+for j in range(2):
+   for k in range(2):
+      for l in range(-2,3):
+        precision_rates = []
+        recall_rates = []
+        channel_classifiers = [[7,1,.29,100], [4,1,.12,.27]]
+        # mod = .01*l
+        mod = 0
+        channel_classifiers[j][k+2] += mod
 
-src = rasterio.open(FILENAME)
+        for i in range(len(files)):
+          file = files[i]
+          metric = metrics[i]
+          # mask = masks[i]
+          # geometries = []
+          # with fiona.open(mask) as shapefile:
+          #   # Iterate over the records
+          #   for record in shapefile:
+          #       # Get the geometry from the record
+          #       geometry = shape(record['geometry'])
+          #       geometries.append(geometry)
 
-contours = segment_contours(FILENAME,5)
+          src = rasterio.open(file)
 
-# lats,longs = load_coords(src)
-
-# toremove = []
-# for i in range(len(contours)):
-#   contour = np.squeeze(contours[i])
-#   coords_shape = Polygon(transform_shape(contour, lats, longs))
-#   found = False
-#   for mask in channel_masks:
-#     if coords_shape.intersects(mask):
-#        found = True
-#        break
-#   if not found:
-#      toremove.append(i)
-
-filtered_contours = contours
-# for idx, ele in enumerate(contours): 
-#   # checking if element not present in index list
-#   if idx not in toremove:
-#       filtered_contours.append(ele)
-channel_classifiers = [[7,1,.29,100], [4,1,.12,.22]]
-labels = np.zeros(len(filtered_contours))
-for i in range(len(filtered_contours)):
-  labels[i] = classify_segment(filtered_contours[i],src, channel_classifiers)
+          contours = segment_contours(file,5)
+          # lats,longs = load_coords(src)
+          # filtered_contours = []
+          # for i in range(len(contours)):
+          #   coords_shape = Polygon(transform_shape(np.squeeze(contours[i]), lats, longs))
+          #   found = False
+          #   for geometry in geometries:
+          #       if coords_shape.intersects(geometry):
+          #           found = True
+          #       break
+          #   if found:
+          #      filtered_contours.append(contours[i])
+          filtered_contours = contours
+          # channel_classifiers = [[7,1,.28,100], [4,1,.12,.26]]
+          labels = np.zeros(len(filtered_contours))
+          for i in range(len(filtered_contours)):
+            labels[i] = classify_segment(filtered_contours[i],src, channel_classifiers)
 
 
+          true_pos, false_pos, true_neg, false_neg, metric_labels = get_metrics(src,filtered_contours,labels,metric)
+          print(true_pos, false_pos, true_neg, false_neg)
+          precision_rates.append(true_pos/(true_pos+false_pos))
+          recall_rates.append(true_pos/(true_pos+false_neg))
 
-true_pos, false_pos, true_neg, false_neg, metric_labels = get_metrics(src,filtered_contours,labels,"channel_testing_data.csv")
-print(true_pos, false_pos, true_neg, false_neg)
+          # display_image(src,filtered_contours,metric_labels)
 
-display_image(src,filtered_contours,metric_labels)
-
-write_shape(filtered_contours, labels, src)
-
-# Visualization or further processing
-# For example, visualizing the classified contours with different colors:
-# image = src.read(3)
-# display_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)  # Convert to BGR format for visualization
-# colors = {True: (0,255,0), False: (255,0,0)}  # Define colors for each class
-# for i in range(len(contours)):
-#     cv2.drawContours(display_image, [contours[i]], -1, colors[labels[i]], 2)
-
-# # Display the result using matplotlib
-# plt.imshow(display_image)
-# plt.show()
+          # write_shape(filtered_contours, labels, src)
+        print(channel_classifiers)
+        print(recall_rates, sum(recall_rates)/len(files))
+        print(precision_rates, sum(precision_rates)/len(files))
