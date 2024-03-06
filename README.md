@@ -49,4 +49,5 @@ The advanced settings page enables the user to adjust the classifier values. The
 
 ## Additional Help
 For additional help for windows installation see: https://learn.microsoft.com/en-us/windows/python/beginners 
+Questions can also be directed to jonathan.w.chipman@dartmouth.edu 
 
