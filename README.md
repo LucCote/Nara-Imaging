@@ -24,7 +24,8 @@
  7. Navigate to the downloaded repository folder
     - Example naviagtion command may be ```os.chdir(Downloads/Nara-Imaging-main)```
  8. Install the required python libraries using the command ```pip install -r requirements.txt```
- 9. Launch the user interface by running the command ```python ctkUI.py```
+    - If this does not work, then try to individually download using... 
+ 10. Launch the user interface by running the command ```python ctkUI.py```
 
 
 ## Usage
@@ -41,6 +42,10 @@
 
 ## Classifier Settings
 The advanced settings page enables the user to adjust the classifier values. The way in which the software classifies contours is through the use of a 2-band normalized difference schema where we check if the difference between two bands scaled by their sum is within a certain value threshold. In the advanced settings, the bands used in classification in addition to the lower and upper thresholds can be adjusted to specific image conditions as the researcher sees fit. After every new image upload the settings will reset to default. 
+
+## Other Thoughts
+- In order to minimize runtime, we recommend to clip images before inputting into our algorithm
+  - An alternative option is to put a channel mask as described above 
 
 ## Additional Help
 For additional help for windows installation see: https://learn.microsoft.com/en-us/windows/python/beginners 
