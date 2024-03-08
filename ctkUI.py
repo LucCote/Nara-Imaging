@@ -13,7 +13,6 @@ from shapely.geometry import shape, Polygon
 from metrics import load_coords, transform_shape
 from output import write_csv, write_shape
 
-
 fig = None
 ax = None
 im = None
@@ -73,12 +72,53 @@ def openMask():
             geometry = shape(record['geometry'])
             geometries.append(geometry)
     masks = geometries
-    
+
 def changeLanguage():
     if switchLang.get() == "Afrikaans":
         welcomeText.configure(text = "Laai 'n prent op met die knoppie hieronder. Die prent moet 'n .tif-uitbreiding hê.")
+        for labelut in label_uts:
+            labelut.configure(text = "Boonste Drempel")
+        for labellt in label_lts:
+            labellt.configure(text = "Laer Drempel")
+        for labelch1 in label_ch1:
+            labelch1.configure(text = "Primêre Kanaal")
+        for labelch2 in label_ch2:
+            labelch2.configure(text = "Verskil Kanaal")
+        ndr.configure(text = "Genormaliseerde Verskilverhoudings (Kanaal)")
+        ndrout.configure(text = "Genormaliseerde Verskilverhoudings (Buite Kanaal)")
+        upload_text.set("Laai TIF-lêer Op")
+        mask_text.set("Laai Kanaalmaskervormlêer Op")
+        start_text.set("Vind !Nara")
+        csv_text.set("Laai !Nara Sentroïed CSV Af")
+        shape_text.set("Aflaai !Nara Vormlêer")
+        dunes_text.set("Buitekanaalanalise (beta)")
+        set_text.set("Bevestig")
+        set2_text.set("Bevestig")
+        tabview._segmented_button._buttons_dict["Display"].configure(state=ctk.NORMAL, text="Vertoon")
+        tabview._segmented_button._buttons_dict["Advanced Settings"].configure(state=ctk.NORMAL, text="Gevorderde Instellings")
+
     elif switchLang.get() == "English":
         welcomeText.configure(text = "Upload an image using the button below. The image must have a .tif extension.")
+        for labelut in label_uts:
+            labelut.configure(text = "Upper Threshold")
+        for labellt in label_lts:
+            labellt.configure(text = "Lower Threshold")
+        for labelch1 in label_ch1:
+            labelch1.configure(text = "Primary Channel")
+        for labelch2 in label_ch2:
+            labelch2.configure(text = "Difference Channel")
+        ndr.configure(text = "Normalized Difference Ratios (Channel)")
+        ndrout.configure(text = "Normalized Difference Ratios (Outside Channel)")
+        upload_text.set("Upload TIF File")
+        mask_text.set("Upload Channel Mask Shapefile")
+        start_text.set("Find !Nara")
+        csv_text.set("Download !Nara Centroid CSV")
+        shape_text.set("Download !Nara Shapefile")
+        dunes_text.set("Outside Channel Analysis (beta)")
+        set_text.set("Set")
+        set2_text.set("Bevestig")
+        tabview._segmented_button._buttons_dict["Vertoon"].configure(state=ctk.NORMAL, text="Display")
+        tabview._segmented_button._buttons_dict["Gevorderde Instellings"].configure(state=ctk.NORMAL, text="Advanced Settings")
 
 def csv():
     global contours
@@ -162,7 +202,7 @@ def demo():
     display_im(result_image)
 
 root = ctk.CTk()
-root.title('!Nara Image Analysis / !Nara Beeldanalise')
+root.title("!Nara Image Analysis / !Nara Beeldanalise")
 ctk.set_default_color_theme("dark-blue")
 
 # Position window in center screen
@@ -209,6 +249,11 @@ tabview.set("Display")  # Set default tab
 channel_classifiers = [[7,1,.29,100], [4,1,.12,.22]]
 channel_classifier_vars = [(ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.StringVar()), (ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.StringVar())]
 
+label_uts = []
+label_lts = []
+label_ch1 = []
+label_ch2 = []
+
 # Add labels to advanced settings options
 ndrFrame = ctk.CTkFrame(master=advSettings)
 ndrFrame.place(relx=0.5, rely=0.25, anchor=CENTER)
@@ -226,6 +271,7 @@ for i in range(len(channel_classifiers)):
     channels = ["(1) Coastal", "(2) Blue", "(3) Green", "(4) Yellow", "(5) Red", "(6) Red Edge", "(7) NIR1", "(8) NIR2"]
     labelch1 = ctk.CTkLabel(master=framech1, text="Primary Channel")
     ch1 = ctk.CTkOptionMenu(master=framech1, values=channels, variable=vb1)
+    label_ch1.append(labelch1)
     vb1.set(channels[b1-1])
     labelch1.grid(row=0, column=0, padx=10, pady=3)
     ch1.grid(row=0, column=1, padx=10, pady=5)
@@ -234,6 +280,7 @@ for i in range(len(channel_classifiers)):
     framech2.grid(row=0, column=1, padx=10, pady=3)
     labelch2 = ctk.CTkLabel(master=framech2, text="Difference Channel")
     labelch2.grid(row=0, column=0, padx=10, pady=3)
+    label_ch2.append(labelch2)
     ch2 = ctk.CTkOptionMenu(master=framech2, values=channels, variable=vb2)
     vb2.set(channels[b2-1])
     ch2.grid(row=0, column=1, padx=10, pady=5)
@@ -242,6 +289,7 @@ for i in range(len(channel_classifiers)):
     framellt.grid(row=1, column=0, padx=10, pady=3)
     labellt = ctk.CTkLabel(master=framellt, text="Lower Threshold")
     labellt.grid(row=0, column=0, padx=10, pady=3)
+    label_lts.append(labellt)
     lower_threshold = ctk.CTkEntry(master=framellt, textvariable=vlt)
     vlt.set(str(lt))
     lower_threshold.grid(row=0, column=1, padx=10, pady=3)
@@ -250,6 +298,7 @@ for i in range(len(channel_classifiers)):
     frameut.grid(row=1, column=1, padx=10, pady=3)
     labelut = ctk.CTkLabel(master=frameut, text="Upper Threshold")
     labelut.grid(row=0, column=0, padx=10, pady=3)
+    label_uts.append(labelut)
     upper_threshold = ctk.CTkEntry(master=frameut, textvariable=vut)
     vut.set(ut)
     upper_threshold.grid(row=0, column=1, padx=10, pady=3)
@@ -263,7 +312,9 @@ def set():
         channel_classifiers[i][2] = float(channel_classifier_vars[i][2].get())
         channel_classifiers[i][3] = float(channel_classifier_vars[i][3].get())
 
-button = ctk.CTkButton(master=ndrFrame, text="Set", command=set)
+set_text = ctk.StringVar()
+button = ctk.CTkButton(master=ndrFrame, textvariable=set_text, command=set)
+set_text.set("Set")
 button.grid(row=2*len(channel_classifiers)+1, column=0, padx=10, pady=10)
 
 dune_classifiers = [[7,1,.29,100], [4,1,.12,.22]]
@@ -272,8 +323,8 @@ dune_classifier_vars = [(ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.Str
 # Add labels to advanced settings options
 ndrFrame = ctk.CTkFrame(master=advSettings)
 ndrFrame.place(relx=0.5, rely=0.75, anchor=CENTER)
-ndr = ctk.CTkLabel(master=ndrFrame, text="Normalized Difference Ratios (Outside Channel)")
-ndr.grid(row=0, column=0, padx=10)
+ndrout = ctk.CTkLabel(master=ndrFrame, text="Normalized Difference Ratios (Outside Channel)")
+ndrout.grid(row=0, column=0, padx=10)
 for i in range(len(dune_classifiers)):
     frameclassifier = ctk.CTkFrame(master=ndrFrame)
     frameclassifier.grid(row=i+1, column=0, padx=0, pady=5)
@@ -286,6 +337,7 @@ for i in range(len(dune_classifiers)):
     channels = ["(1) Coastal", "(2) Blue", "(3) Green", "(4) Yellow", "(5) Red", "(6) Red Edge", "(7) NIR1", "(8) NIR2"]
     labelch1 = ctk.CTkLabel(master=framech1, text="Primary Channel")
     ch1 = ctk.CTkOptionMenu(master=framech1, values=channels, variable=vb1)
+    label_ch1.append(labelch1)
     vb1.set(channels[b1-1])
     labelch1.grid(row=0, column=0, padx=10, pady=3)
     ch1.grid(row=0, column=1, padx=10, pady=3)
@@ -295,12 +347,14 @@ for i in range(len(dune_classifiers)):
     labelch2 = ctk.CTkLabel(master=framech2, text="Difference Channel")
     labelch2.grid(row=0, column=0, padx=10, pady=3)
     ch2 = ctk.CTkOptionMenu(master=framech2, values=channels, variable=vb2)
+    label_ch2.append(labelch2)
     vb2.set(channels[b2-1])
     ch2.grid(row=0, column=1, padx=10, pady=3)
 
     framellt = ctk.CTkFrame(master=frameclassifier)
     framellt.grid(row=1, column=0, padx=10, pady=3)
     labellt = ctk.CTkLabel(master=framellt, text="Lower Threshold")
+    label_lts.append(labellt)
     labellt.grid(row=0, column=0, padx=10, pady=3)
     lower_threshold = ctk.CTkEntry(master=framellt, textvariable=vlt)
     vlt.set(str(lt))
@@ -310,6 +364,7 @@ for i in range(len(dune_classifiers)):
     frameut.grid(row=1, column=1, padx=10, pady=3)
     labelut = ctk.CTkLabel(master=frameut, text="Upper Threshold")
     labelut.grid(row=0, column=0, padx=10, pady=3)
+    label_uts.append(labelut)
     upper_threshold = ctk.CTkEntry(master=frameut, textvariable=vut)
     vut.set(ut)
     upper_threshold.grid(row=0, column=1, padx=10, pady=3)
@@ -327,18 +382,37 @@ def toggle_dune():
     global dunes
     dunes = not dunes
 
-button = ctk.CTkButton(master=ndrFrame, text="Set", command=setdune)
+set2_text = ctk.StringVar()
+button = ctk.CTkButton(master=ndrFrame, textvariable=set2_text, command=setdune)
+set2_text.set("Set")
 button.grid(row=2*len(dune_classifiers)+1, column=0, padx=10, pady=10)
 
 # Other UI elements
 welcomeText = ctk.CTkLabel(master=display, text="Upload an image using the button below. The image must have a .tif extension.")
-uploadButton = ctk.CTkButton(master=display, text="Upload TIF file / Laai TIF-lêer op", command=openImageFile)
-maskButton = ctk.CTkButton(master=display, text="Upload Channel Mask Shapefile", command=openMask)
-startButton = ctk.CTkButton(master=display, text="Find !Nara", command=demo)
-csvButton = ctk.CTkButton(master=display, text="Download !Nara Centroid CSV", command=csv)
-shapeButton = ctk.CTkButton(master=display, text="Download !Nara Shapefile", command=shapefile)
-dunesButton = ctk.CTkCheckBox(master=display, text="Outside Channel Analysis (beta)", command=toggle_dune, onvalue="on", offvalue="off")
-# Create UI elements
+
+upload_text = ctk.StringVar()
+uploadButton = ctk.CTkButton(master=display, textvariable=upload_text, command=openImageFile)
+upload_text.set("Upload TIF File")
+
+mask_text = ctk.StringVar()
+maskButton = ctk.CTkButton(master=display, textvariable=mask_text, command=openMask)
+mask_text.set("Upload Channel Mask Shapefile")
+
+start_text = ctk.StringVar()
+startButton = ctk.CTkButton(master=display, textvariable=start_text, command=demo)
+start_text.set("Find !Nara")
+
+csv_text = ctk.StringVar()
+csvButton = ctk.CTkButton(master=display, textvariable=csv_text, command=csv)
+csv_text.set("Download !Nara Centroid CSV")
+
+shape_text = ctk.StringVar()
+shapeButton = ctk.CTkButton(master=display, textvariable=shape_text, command=shapefile)
+shape_text.set("Download !Nara Shapefile")
+
+dunes_text = ctk.StringVar()
+dunesButton = ctk.CTkCheckBox(master=display, textvariable=dunes_text, command=toggle_dune, onvalue="on", offvalue="off")
+dunes_text.set("Outside Channel Analysis (beta)")
 
 # Put UI elements on the screen
 welcomeText.place(relx=0.5, rely=0.05, anchor=CENTER)
@@ -354,5 +428,3 @@ def quitter():
 
 root.protocol('WM_DELETE_WINDOW', quitter)
 root.mainloop()
-
-

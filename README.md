@@ -2,7 +2,7 @@
 
 ## Installation (Mac)
  1. [Download](https://github.com/LucCote/Nara-Imaging/archive/refs/heads/main.zip) and unzip or clone this repository
- 2. Open terminal application and navigate to the downloaded repository folder
+ 2. Open the terminal application from Finder and navigate to the downloaded repository folder
     - Example naviagtion command may be ```cd Downloads/Nara-Imaging-main```
  3. Install the required python libraries using the command ```pip install -r requirements.txt```
  4. Launch the user interface by running the command ```python ctkUI.py```
@@ -12,7 +12,7 @@
 ### Python Installation
 1. Go to your Start menu (lower left Windows icon), type "Microsoft Store", select the link to open the store.
 2. Once the store is open, select Search from the upper-right menu and enter "Python". Select any version above 3.9 Python from the results under Apps (recommend the most recent). Once you've determined which version you would like to install, select Get.
-3. Once Python has completed the downloading and installation process, open Windows PowerShell using the Start menu (lower left Windows icon). Once PowerShell is open, enter the command ```Python --version``` to confirm that Python3 has installed on your machine. Also confirm that pip is istalled with the command ```pip --version ```
+3. Once Python has completed the downloading and installation process, open Windows PowerShell using the Start menu (lower left Windows icon). Once PowerShell is open, enter the command ```Python --version``` to confirm that Python3 has installed on your machine. Also confirm that pip is installed with the command ```pip --version ```
 
  ### VS Code Installation
  1. To install VS Code, download VS Code for Windows: https://code.visualstudio.com.
@@ -24,7 +24,8 @@
  7. Navigate to the downloaded repository folder
     - Example naviagtion command may be ```os.chdir(Downloads/Nara-Imaging-main)```
  8. Install the required python libraries using the command ```pip install -r requirements.txt```
- 9. Launch the user interface by running the command ```python ctkUI.py```
+    - If this does not work, then try to individually download using... 
+ 10. Launch the user interface by running the command ```python ctkUI.py```
 
 
 ## Usage
@@ -42,6 +43,11 @@
 ## Classifier Settings
 The advanced settings page enables the user to adjust the classifier values. The way in which the software classifies contours is through the use of a 2-band normalized difference schema where we check if the difference between two bands scaled by their sum is within a certain value threshold. In the advanced settings, the bands used in classification in addition to the lower and upper thresholds can be adjusted to specific image conditions as the researcher sees fit. After every new image upload the settings will reset to default. 
 
+## Other Thoughts
+- In order to minimize runtime, we recommend to clip images before inputting into our algorithm
+  - An alternative option is to put a channel mask as described above 
+
 ## Additional Help
 For additional help for windows installation see: https://learn.microsoft.com/en-us/windows/python/beginners 
+Questions can also be directed to jonathan.w.chipman@dartmouth.edu 
 
