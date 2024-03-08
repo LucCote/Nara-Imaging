@@ -24,9 +24,9 @@ masks = None
 contours = None
 dunes = False
 
-# Displaying images
+# load an image into the display canvas
 def display_im(image):
-    # Generate the figure and plot object which will be linked to the root element
+    # Generate the figure and plot object which will be linked to the display element
     global fig
     global ax
     global canvas
@@ -41,11 +41,12 @@ def display_im(image):
     canvas.draw()
     canvas.get_tk_widget().place(relx=0.5, rely=0.56, anchor=CENTER)
 
-def openFile():
+# asks user to open image and then and displays it
+def openImageFile():
     global src
     global filename
     global masks
-    masks = None
+    masks = None # reset channel masks as we now have a new image
     filename = ctk.filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("tiff","*.tiff, *.tif"),("All files","*.*")))
     if filename is None or len(filename) == 0:
         return
@@ -57,6 +58,7 @@ def openFile():
     display_image_8bit = (display_image * 255).astype('uint8')
     display_im(display_image_8bit)
 
+# asks user to open channel mask shapefile and stores it
 def openMask():
     global masks
     filename = ctk.filedialog.askopenfilename(initialdir="", title="Select a File / Kies 'n lêer", filetypes=(("shape","*.shp"),("All files","*.*")))
@@ -330,7 +332,7 @@ button.grid(row=2*len(dune_classifiers)+1, column=0, padx=10, pady=10)
 
 # Other UI elements
 welcomeText = ctk.CTkLabel(master=display, text="Upload an image using the button below. The image must have a .tif extension.")
-uploadButton = ctk.CTkButton(master=display, text="Upload TIF file / Laai TIF-lêer op", command=openFile)
+uploadButton = ctk.CTkButton(master=display, text="Upload TIF file / Laai TIF-lêer op", command=openImageFile)
 maskButton = ctk.CTkButton(master=display, text="Upload Channel Mask Shapefile", command=openMask)
 startButton = ctk.CTkButton(master=display, text="Find !Nara", command=demo)
 csvButton = ctk.CTkButton(master=display, text="Download !Nara Centroid CSV", command=csv)
