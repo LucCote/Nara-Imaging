@@ -60,27 +60,27 @@ for j in range(2):
       for l in range(-2,3):
         precision_rates = []
         recall_rates = []
-        channel_classifiers = [[7,1,.29,100], [4,1,.12,.27]]
-        # mod = .01*l
-        mod = 0
+        channel_classifiers = [[7,1,.3,100], [4,1,.12,.27]]
+        mod = .01*l
+        # mod = 0
         channel_classifiers[j][k+2] += mod
 
         for i in range(len(files)):
           file = files[i]
           metric = metrics[i]
-          # mask = masks[i]
-          # geometries = []
-          # with fiona.open(mask) as shapefile:
-          #   # Iterate over the records
-          #   for record in shapefile:
-          #       # Get the geometry from the record
-          #       geometry = shape(record['geometry'])
-          #       geometries.append(geometry)
+          mask = masks[i]
+          geometries = []
+          with fiona.open(mask) as shapefile:
+            # Iterate over the records
+            for record in shapefile:
+                # Get the geometry from the record
+                geometry = shape(record['geometry'])
+                geometries.append(geometry)
 
           src = rasterio.open(file)
 
           contours = segment_contours(file,5)
-          # lats,longs = load_coords(src)
+          lats,longs = load_coords(src)
           # filtered_contours = []
           # for i in range(len(contours)):
           #   coords_shape = Polygon(transform_shape(np.squeeze(contours[i]), lats, longs))
@@ -91,6 +91,7 @@ for j in range(2):
           #       break
           #   if found:
           #      filtered_contours.append(contours[i])
+          channel_classifiers = [[7,1,.3,100], [4,1,.12,.27]]
           filtered_contours = contours
           # channel_classifiers = [[7,1,.28,100], [4,1,.12,.26]]
           labels = np.zeros(len(filtered_contours))
@@ -103,7 +104,7 @@ for j in range(2):
           precision_rates.append(true_pos/(true_pos+false_pos))
           recall_rates.append(true_pos/(true_pos+false_neg))
 
-          # display_image(src,filtered_contours,metric_labels)
+          display_image(src,filtered_contours,metric_labels)
 
           # write_shape(filtered_contours, labels, src)
         print(channel_classifiers)
