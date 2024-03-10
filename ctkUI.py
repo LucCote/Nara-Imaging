@@ -246,7 +246,10 @@ tabview.add("Advanced Settings")  # Add advanced settings tab
 advSettings = tabview.tab("Advanced Settings")
 tabview.set("Display")  # Set default tab
 
-channel_classifiers = [[7,1,.29,100], [4,1,.12,.22]]
+
+## Generate channel classifier settings page
+
+channel_classifiers = [[7,1,.29,100], [4,1,.12,.22]] # default settings for channel classifier
 channel_classifier_vars = [(ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.StringVar()), (ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.StringVar())]
 
 label_uts = []
@@ -303,7 +306,7 @@ for i in range(len(channel_classifiers)):
     vut.set(ut)
     upper_threshold.grid(row=0, column=1, padx=10, pady=3)
 
-def set():
+def set(): # applies input text to channel classifier
     global channel_classifiers
     global channel_classifier_vars
     for i in range(len(channel_classifiers)):
@@ -316,6 +319,9 @@ set_text = ctk.StringVar()
 button = ctk.CTkButton(master=ndrFrame, textvariable=set_text, command=set)
 set_text.set("Set")
 button.grid(row=2*len(channel_classifiers)+1, column=0, padx=10, pady=10)
+
+
+## Generate dune classifier settings page
 
 dune_classifiers = [[7,1,.29,100], [4,1,.12,.22]]
 dune_classifier_vars = [(ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.StringVar()), (ctk.StringVar(),ctk.StringVar(),ctk.StringVar(),ctk.StringVar())]
@@ -369,7 +375,7 @@ for i in range(len(dune_classifiers)):
     vut.set(ut)
     upper_threshold.grid(row=0, column=1, padx=10, pady=3)
 
-def setdune():
+def setdune(): # applies input text to dune classifier
     global dune_classifiers
     global dune_classifier_vars
     for i in range(len(channel_classifiers)):
@@ -378,6 +384,8 @@ def setdune():
         dune_classifiers[i][2] = float(dune_classifier_vars[i][2].get())
         dune_classifiers[i][3] = float(dune_classifier_vars[i][3].get())
 
+
+# Function to toggle whether or not to classify outside channel
 def toggle_dune():
     global dunes
     dunes = not dunes
@@ -387,7 +395,7 @@ button = ctk.CTkButton(master=ndrFrame, textvariable=set2_text, command=setdune)
 set2_text.set("Set")
 button.grid(row=2*len(dune_classifiers)+1, column=0, padx=10, pady=10)
 
-# Other UI elements
+## Generate other UI elements
 welcomeText = ctk.CTkLabel(master=display, text="Upload an image using the button below. The image must have a .tif extension.")
 
 upload_text = ctk.StringVar()
