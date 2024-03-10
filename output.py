@@ -5,6 +5,7 @@ import csv
 import cv2
 from pyproj import Transformer
 import fiona
+from fiona.crs import CRS
 
 # load nara point data
 def load_coords(src):
@@ -33,10 +34,6 @@ def transform_shape(shape, lats, longs):
 
 
 def get_center(contour, src):
-    # print(contour)
-    # polygon = Polygon(np.squeeze(contour))
-    # if polygon.area < 0.0045*(polygon.length**2):
-    #     return False
     lats, longs = load_coords(src)
     coords_shape = transform_shape(np.squeeze(contour), lats, longs)
     polygon = Polygon(coords_shape)
@@ -44,7 +41,6 @@ def get_center(contour, src):
     return center.x, center.y
 
 def write_shape(file, contours, labels, src):
-  # nara_coords = "latitude,longitude\n"
   lats, longs = load_coords(src)
   # Define a polygon feature geometry with one attribute
   schema = {
@@ -52,7 +48,7 @@ def write_shape(file, contours, labels, src):
       'properties': {'id': 'int'},
   }
   # Write a new Shapefile
-  with fiona.open(file, 'w', 'ESRI Shapefile', schema) as c:
+  with fiona.open(file, 'w', 'ESRI Shapefile', schema, crs=CRS.from_epsg(4326)) as c:
     j = 0
     for i in range(len(contours)):
       if not labels[i]:
@@ -60,9 +56,6 @@ def write_shape(file, contours, labels, src):
       contour = contours[i]
       coords_shape = transform_shape(np.squeeze(contour), lats, longs)
       polygon = Polygon(coords_shape)
-      center = polygon.centroid
-      # nara_coords+=str(center.y)+","+str(center.x)+"\n"
-  
       ## If there are multiple geometries, put the "for" loop here
       c.write({
           'geometry': mapping(polygon),
