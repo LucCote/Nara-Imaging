@@ -27,6 +27,14 @@
     - If this does not work, then try to individually download using... 
  10. Launch the user interface by running the command ```python ctkUI.py```
 
+## Installation (Conda)
+To install this project regardless of operating system we've provided an environment.yml file to be used with the conda virtual environment.
+1. Install conda as desribed on the [conda docs webpage](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
+2. Create this project's conda environment using the environment.yml file as described [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file)
+   - This is done using the conda cli to run the following command ```conda env create -f environment.yml```
+3. Activate this project's as described [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment)
+   - This is done using the conda cli to run the following command ```conda activate narafinder```
+4. Launch the user interface by running the command ```python ctkUI.py```
 
 ## Usage
 1. Launch the UI as described in the installation steps.
