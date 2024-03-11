@@ -27,8 +27,8 @@
     - If this does not work, then try to individually download using... 
  10. Launch the user interface by running the command ```python ctkUI.py```
 
-## Installation (Conda)
-To install this project regardless of operating system we've provided an environment.yml file to be used with the conda virtual environment.
+## Installation (Virtual Environment)
+To install this project regardless of operating system we've provided an environment.yml file to be used with the conda virtual environment. If you prefer a virtual environment to contain python dependency installations or if the operating system specific installation instructions failed to work, this installation is likely a good path to take.
 1. Install conda as desribed on the [conda docs webpage](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
 2. Create this project's conda environment using the environment.yml file as described [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file)
    - This is done using the conda cli to run the following command ```conda env create -f environment.yml```
